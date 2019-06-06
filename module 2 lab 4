@@ -1,0 +1,269 @@
+#include "pch.h"
+
+#include <iostream>
+
+
+
+using namespace std;
+
+
+
+void shell(int *, int);
+
+void quick_sort(int *, int, int);
+
+void by_counting(int *, int);
+
+void radix_sort(int *&, int, int);
+
+
+
+int main()
+
+{
+
+	int size;
+
+	cout << "Enter array size: ";
+
+	cin >> size;
+
+	int *arr = new int[size];
+
+	for (int i = 0; i < size; i++)
+
+	{
+
+		cout << "Enter " << i << " element: ";
+
+		cin >> arr[i];
+
+	}
+
+
+
+	quick_sort(arr, 0, size - 1);
+
+
+
+	cout << "Result:" << endl;
+
+	for (int i = 0; i < size; i++)
+
+		cout << arr[i] << ' ';
+
+	cout << endl;
+
+
+
+	return 0;
+
+}
+
+
+
+void shell(int *arr, int size)
+
+{
+
+	int tmp, j;
+
+	for (int step = size / 2; step > 0; step /= 2)
+
+	{
+
+		for (int i = step; i < size; i++)
+
+		{
+
+			tmp = arr[i];
+
+			for (j = i; j >= step; j -= step)
+
+			{
+
+				if (tmp < arr[j - step])
+
+					arr[j] = arr[j - step];
+
+				else
+
+					break;
+
+			}
+
+			arr[j] = tmp;
+
+		}
+
+	}
+
+}
+
+
+
+void quick_sort(int *arr, int first, int last)
+
+{
+
+	int f = first, l = last;
+
+	int mid = arr[(f + l) / 2]; //вибір опорного елементу
+
+	do
+
+	{
+
+		while (arr[f] < mid) f++;
+
+		while (arr[l] > mid) l--;
+
+		if (f <= l) //перестановка елементів
+
+		{
+
+			int count = arr[f];
+
+			arr[f] = arr[l];
+
+			arr[l] = count;
+
+			f++;
+
+			l--;
+
+		}
+
+	} while (f < l);
+
+	if (first < l) quick_sort(arr, first, l);
+
+	if (f < last) quick_sort(arr, f, last);
+
+}
+
+
+
+void by_counting(int *arr, int size)
+
+{
+
+	int max = INT_MIN, min = INT_MAX;
+
+	for (int i = 0; i < size; i++) 
+
+	{
+
+		if (arr[i] > max)
+
+			max = arr[i];
+
+		if (arr[i] < min)
+
+			min = arr[i];
+
+	}
+
+	int *c = new int[max + 1 - min];
+
+	for (int i = 0; i < max + 1 - min; i++) 
+
+	{
+
+		c[i] = 0;
+
+	}
+
+
+
+	for (int i = 0; i < size; i++) 
+
+	{
+
+		c[arr[i] - min] += 1;
+
+	}
+
+
+
+	int i = 0;
+
+	for (int j = min; j <= max; j++) 
+
+	{
+
+		while (c[j - min] != 0) {
+
+			arr[i] = j;
+
+			c[j - min]--;
+
+			i++;
+
+		}
+
+	}
+
+}
+
+
+
+int grade_amount(int number, int grade)
+
+{
+
+	while (grade > 1)
+
+	{
+
+		number /= 10;
+
+		grade--;
+
+	}
+
+	return number % 10;
+
+}
+
+void radix_sort(int *&arr, int size, int grade)
+
+{
+
+	if (grade != 0)
+
+		radix_sort(arr, size, grade - 1);
+
+
+
+	int *temparr = new int[size];
+
+	int counter = 0;
+
+	for (int i = 0; i < 10; i++)
+
+	{
+
+		for (int j = 0; j < size; j++)
+
+		{
+
+			if (grade_amount(arr[j], grade) == i)
+
+			{
+
+				temparr[counter] = arr[j];
+
+				counter++;
+
+			}
+
+		}
+
+	}
+
+	delete[] arr;
+
+	arr = temparr;
+
+}
